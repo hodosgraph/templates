@@ -1,0 +1,50 @@
+name: Base image digest updates
+
+# Dependabot cannot update Docker images declared through ARG and can miss later FROM stages.
+# This narrow workflow only updates the two allowlisted base-image digests and opens a review PR.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 6 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: base-image-updates
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+      - id: update
+        run: |
+          set -euo pipefail
+          node .hodos/update-base-images.mjs --write | tee /tmp/base-image-updates.json
+          if git diff --quiet -- Dockerfile; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Open a review PR through the GitHub API
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          existing="$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --json headRefName --jq '[.[] | select(.headRefName | startswith("hodos/base-images-"))] | length')"
+          if [ "$existing" -gt 0 ]; then echo "An open HodosGraph base-image update PR already exists; leaving it for review."; exit 0; fi
+          branch="hodos/base-images-${GITHUB_RUN_ID}"
+          base="${{ github.event.repository.default_branch }}"
+          base_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$base" --jq .object.sha)"
+          gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/heads/$branch" -f sha="$base_sha" >/dev/null
+          file_sha="$(gh api "repos/$GITHUB_REPOSITORY/contents/Dockerfile?ref=$branch" --jq .sha)"
+          content="$(base64 -w0 Dockerfile)"
+          gh api --method PUT "repos/$GITHUB_REPOSITORY/contents/Dockerfile" -f message='chore(container): update pinned base image digests' -f content="$content" -f branch="$branch" -f sha="$file_sha" >/dev/null
+          gh pr create --repo "$GITHUB_REPOSITORY" --base "$base" --head "$branch" --title 'chore(container): update pinned base image digests' --body 'Updates only the allowlisted builder/runtime digests. CI must rebuild and scan the final image before merge.'

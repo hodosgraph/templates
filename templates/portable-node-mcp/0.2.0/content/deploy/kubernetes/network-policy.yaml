@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ hodos.name }}-default-deny
+  labels:
+    app.kubernetes.io/name: {{ hodos.name }}
+    app.kubernetes.io/managed-by: hodosgraph
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ hodos.name }}
+  policyTypes: ["Ingress", "Egress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              hodosgraph.com/mcp-client: "true"
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress: []

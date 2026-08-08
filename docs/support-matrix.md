@@ -22,10 +22,10 @@ immutable digest, agent-to-MCP identity, graph convergence, suspension and teard
 | template release | framework | deterministic mode | official MCP SDK | OpenTelemetry | Gold |
 | --- | --- | --- | --- | --- | --- |
 | `portable-node-agent` `0.1.0` | none | Yes | not applicable | No | No |
-| `portable-node-mcp` `0.1.0` | none | Yes | No, minimal handwritten scaffold | No | No |
+| `portable-node-mcp` `0.2.0` | none | Yes | Yes, official Tier 1 SDK | Yes, OTLP | Yes |
 
-The current templates are suitable for catalog, image and local runtime verification. They are not
-presented as production agent-framework or MCP reference implementations.
+Template conformance and provider maturity are independent. The portable MCP runtime can pass Gold
+locally while every deployment target remains Scaffold until its dated live gate passes.
 
 ## Promotion evidence
 

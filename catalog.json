@@ -22,14 +22,14 @@
       },
       {
         "id": "portable-node-mcp",
-        "version": "0.1.0",
-        "manifest": "templates/portable-node-mcp/0.1.0/template.json",
+        "version": "0.2.0",
+        "manifest": "templates/portable-node-mcp/0.2.0/template.json",
         "conformance": {
           "framework": "none",
           "deterministicMode": true,
-          "mcp": "minimal-handwritten",
-          "openTelemetry": "none",
-          "level": "scaffold"
+          "mcp": "official-sdk",
+          "openTelemetry": "otlp",
+          "level": "gold"
         }
       }
     ],

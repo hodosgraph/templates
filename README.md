@@ -7,7 +7,7 @@ reviewed and released independently, while HodosGraph consumes an immutable cata
 The initial catalog contains:
 
 - `portable-node-agent` `0.1.0`: a deterministic, model-free HTTP agent;
-- `portable-node-mcp` `0.1.0`: a deterministic, model-free Streamable HTTP MCP server;
+- `portable-node-mcp` `0.2.0`: a Gold-conformant, model-free MCP SDK server with OTLP telemetry;
 - target profiles for Kubernetes GitOps, AWS AgentCore, Azure agents and Google Cloud agents.
 
 All target profiles are currently `scaffold`. This means the template source and local container
@@ -25,7 +25,7 @@ Build the reference images from their version directories:
 
 ```bash
 docker build -t hodos-agent:test templates/portable-node-agent/0.1.0/content
-docker build -t hodos-mcp:test templates/portable-node-mcp/0.1.0/content
+docker build -t hodos-mcp:test templates/portable-node-mcp/0.2.0/content
 ```
 
 Start with the [documentation index](docs/index.md). It separates commands that work today from
