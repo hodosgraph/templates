@@ -1,0 +1,38 @@
+{
+  "$schema": "../schemas/target-profile-v1alpha1.schema.json",
+  "apiVersion": "templates.hodosgraph.com/v1alpha1",
+  "kind": "TargetProfile",
+  "metadata": {
+    "id": "aws-agentcore",
+    "name": "AWS Bedrock AgentCore"
+  },
+  "spec": {
+    "provider": "aws",
+    "maturity": "scaffold",
+    "artifact": {
+      "format": "oci-image",
+      "architectures": ["linux/arm64"],
+      "registry": "Amazon ECR"
+    },
+    "agentHosting": ["Bedrock AgentCore Runtime"],
+    "mcpHosting": ["Bedrock AgentCore Runtime MCP server"],
+    "delivery": {
+      "method": "Hodos Workflow placement driver",
+      "immutableReferenceRequired": true
+    },
+    "identity": {
+      "ci": "GitHub OIDC to source registry only",
+      "deployment": "Hodos Workflow OIDC to scoped AWS role",
+      "runtime": "AgentCore workload identity and execution role"
+    },
+    "events": {
+      "mode": "CloudTrail and EventBridge to SQS plus periodic reconciliation",
+      "authoritativeRefresh": true
+    },
+    "documentation": {
+      "guide": null,
+      "verifiedAt": null,
+      "note": "Not published as supported until the live AWS gate passes."
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://templates.hodosgraph.com/schemas/template-v1alpha1.schema.json",
+  "title": "HodosGraph versioned template manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "apiVersion": { "const": "templates.hodosgraph.com/v1alpha1" },
+    "kind": { "const": "Template" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "version", "description"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$" },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "maturity", "inputSchema", "files", "targets", "security"],
+      "properties": {
+        "type": { "enum": ["agent", "mcp-server"] },
+        "maturity": { "enum": ["scaffold", "preview", "stable"] },
+        "inputSchema": { "type": "string", "minLength": 1 },
+        "files": { "type": "array", "minItems": 1 },
+        "targets": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "security": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["dockerfile", "runtimeUser", "readOnlyRootFilesystem", "dependencyUpdaters"],
+          "properties": {
+            "dockerfile": { "type": "string" },
+            "runtimeUser": { "const": 65532 },
+            "readOnlyRootFilesystem": { "const": true },
+            "dependencyUpdaters": {
+              "type": "array",
+              "items": { "enum": ["dependabot", "renovate"] },
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

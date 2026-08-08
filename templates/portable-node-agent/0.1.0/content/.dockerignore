@@ -1,0 +1,8 @@
+.git
+.github
+deploy
+node_modules
+coverage
+*.log
+.env*
+**/*secret*

@@ -1,0 +1,29 @@
+{
+  "$schema": "./schemas/catalog-v1alpha1.schema.json",
+  "apiVersion": "templates.hodosgraph.com/v1alpha1",
+  "kind": "TemplateCatalog",
+  "metadata": {
+    "name": "hodosgraph-official",
+    "publisher": "HodosGraph"
+  },
+  "spec": {
+    "templates": [
+      {
+        "id": "portable-node-agent",
+        "version": "0.1.0",
+        "manifest": "templates/portable-node-agent/0.1.0/template.json"
+      },
+      {
+        "id": "portable-node-mcp",
+        "version": "0.1.0",
+        "manifest": "templates/portable-node-mcp/0.1.0/template.json"
+      }
+    ],
+    "targetProfiles": [
+      "targets/kubernetes-gitops.json",
+      "targets/aws-agentcore.json",
+      "targets/azure-agents.json",
+      "targets/gcp-agents.json"
+    ]
+  }
+}

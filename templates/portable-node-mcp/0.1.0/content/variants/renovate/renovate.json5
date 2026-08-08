@@ -1,0 +1,26 @@
+{
+  extends: ["config:recommended"],
+  dependencyDashboard: true,
+  enabledManagers: ["npm", "dockerfile", "github-actions"],
+  minimumReleaseAge: "7 days",
+  rangeStrategy: "pin",
+  packageRules: [
+    {
+      description: "Group routine Node updates",
+      matchManagers: ["npm"],
+      matchUpdateTypes: ["minor", "patch", "digest"],
+      groupName: "node minor and patch dependencies"
+    },
+    {
+      description: "Require explicit migration review for major updates",
+      matchUpdateTypes: ["major"],
+      dependencyDashboardApproval: true
+    },
+    {
+      description: "Keep container and action pins separate for clear supply-chain review",
+      matchManagers: ["dockerfile", "github-actions"],
+      separateMajorMinor: true,
+      separateMinorPatch: true
+    }
+  ]
+}

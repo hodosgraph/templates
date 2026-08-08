@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://templates.hodosgraph.com/portable-node-mcp/0.1.0/input.schema.json",
+  "title": "Portable MCP server template inputs",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "description", "owner", "target", "imageRepository", "dependencyUpdater"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,47}[a-z0-9]$",
+      "description": "DNS-safe service and repository name."
+    },
+    "description": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "owner": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "target": {
+      "enum": ["kubernetes-gitops", "aws-agentcore", "azure-agents", "gcp-agents"]
+    },
+    "imageRepository": {
+      "type": "string",
+      "pattern": "^[a-z0-9.-]+(?:\\:[0-9]+)?/[a-z0-9_./-]+$"
+    },
+    "dependencyUpdater": {
+      "enum": ["dependabot", "renovate"],
+      "default": "dependabot"
+    },
+    "annotations": {
+      "type": "object",
+      "default": {},
+      "maxProperties": 32,
+      "propertyNames": {
+        "pattern": "^(?!(?:hodosgraph\\.com/|app\\.kubernetes\\.io/managed-by$|org\\.opencontainers\\.image\\.))[A-Za-z0-9][A-Za-z0-9./_-]{0,126}$"
+      },
+      "additionalProperties": { "type": "string", "maxLength": 512 }
+    },
+    "labels": {
+      "type": "object",
+      "default": {},
+      "maxProperties": 32,
+      "propertyNames": {
+        "pattern": "^(?!(?:hodosgraph\\.com/|app\\.kubernetes\\.io/managed-by$))[A-Za-z0-9][A-Za-z0-9./_-]{0,62}$"
+      },
+      "additionalProperties": { "type": "string", "maxLength": 63 }
+    },
+    "config": {
+      "type": "object",
+      "default": {},
+      "maxProperties": 32,
+      "propertyNames": { "pattern": "^[A-Z][A-Z0-9_]{0,63}$" },
+      "additionalProperties": { "type": "string", "maxLength": 2048 }
+    },
+    "secretRefs": {
+      "type": "array",
+      "default": [],
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["env", "name", "key"],
+        "properties": {
+          "env": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{0,63}$" },
+          "name": { "type": "string", "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$" },
+          "key": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,253}$" }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "default": {
+        "cpuRequest": "100m",
+        "cpuLimit": "500m",
+        "memoryRequest": "128Mi",
+        "memoryLimit": "256Mi"
+      },
+      "properties": {
+        "cpuRequest": { "type": "string", "pattern": "^[1-9][0-9]*m$" },
+        "cpuLimit": { "type": "string", "pattern": "^[1-9][0-9]*m$" },
+        "memoryRequest": { "type": "string", "pattern": "^[1-9][0-9]*(Mi|Gi)$" },
+        "memoryLimit": { "type": "string", "pattern": "^[1-9][0-9]*(Mi|Gi)$" }
+      }
+    }
+  }
+}

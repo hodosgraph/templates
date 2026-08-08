@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://templates.hodosgraph.com/schemas/target-profile-v1alpha1.schema.json",
+  "title": "HodosGraph target profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "apiVersion": { "const": "templates.hodosgraph.com/v1alpha1" },
+    "kind": { "const": "TargetProfile" },
+    "metadata": { "type": "object" },
+    "spec": { "type": "object" }
+  }
+}

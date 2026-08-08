@@ -1,0 +1,58 @@
+{
+  "$schema": "../../../schemas/template-v1alpha1.schema.json",
+  "apiVersion": "templates.hodosgraph.com/v1alpha1",
+  "kind": "Template",
+  "metadata": {
+    "id": "portable-node-mcp",
+    "name": "Portable deterministic Node.js MCP server",
+    "version": "0.1.0",
+    "description": "A model-free Streamable HTTP MCP server with a secure OCI image and provider target profiles."
+  },
+  "spec": {
+    "type": "mcp-server",
+    "maturity": "scaffold",
+    "inputSchema": "input.schema.json",
+    "files": [
+      { "source": "content/.dockerignore", "target": ".dockerignore" },
+      { "source": "content/Dockerfile", "target": "Dockerfile" },
+      { "source": "content/README.md", "target": "README.md" },
+      { "source": "content/SECURITY.md", "target": "SECURITY.md" },
+      { "source": "content/package.json", "target": "package.json" },
+      { "source": "content/package-lock.json", "target": "package-lock.json" },
+      { "source": "content/src/server.mjs", "target": "src/server.mjs" },
+      { "source": "content/test/server.test.mjs", "target": "test/server.test.mjs" },
+      { "source": "content/deploy/kubernetes/deployment.yaml", "target": "deploy/kubernetes/deployment.yaml" },
+      { "source": "content/deploy/kubernetes/network-policy.yaml", "target": "deploy/kubernetes/network-policy.yaml" },
+      { "source": "content/deploy/kubernetes/service.yaml", "target": "deploy/kubernetes/service.yaml" },
+      { "source": "content/.github/workflows/ci.yml", "target": ".github/workflows/ci.yml" },
+      { "source": "content/.github/workflows/release.yml", "target": ".github/workflows/release.yml" },
+      {
+        "source": "content/variants/dependabot/dependabot.yml",
+        "target": ".github/dependabot.yml",
+        "when": { "input": "dependencyUpdater", "equals": "dependabot" }
+      },
+      {
+        "source": "content/variants/dependabot/base-image-updates.yml",
+        "target": ".github/workflows/base-image-updates.yml",
+        "when": { "input": "dependencyUpdater", "equals": "dependabot" }
+      },
+      {
+        "source": "content/variants/dependabot/update-base-images.mjs",
+        "target": ".hodos/update-base-images.mjs",
+        "when": { "input": "dependencyUpdater", "equals": "dependabot" }
+      },
+      {
+        "source": "content/variants/renovate/renovate.json5",
+        "target": "renovate.json5",
+        "when": { "input": "dependencyUpdater", "equals": "renovate" }
+      }
+    ],
+    "targets": ["kubernetes-gitops", "aws-agentcore", "azure-agents", "gcp-agents"],
+    "security": {
+      "dockerfile": "content/Dockerfile",
+      "runtimeUser": 65532,
+      "readOnlyRootFilesystem": true,
+      "dependencyUpdaters": ["dependabot", "renovate"]
+    }
+  }
+}

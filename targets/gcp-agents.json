@@ -1,0 +1,38 @@
+{
+  "$schema": "../schemas/target-profile-v1alpha1.schema.json",
+  "apiVersion": "templates.hodosgraph.com/v1alpha1",
+  "kind": "TargetProfile",
+  "metadata": {
+    "id": "gcp-agents",
+    "name": "Google Cloud agent platform"
+  },
+  "spec": {
+    "provider": "gcp",
+    "maturity": "scaffold",
+    "artifact": {
+      "format": "oci-image",
+      "architectures": ["linux/amd64"],
+      "registry": "Artifact Registry"
+    },
+    "agentHosting": ["Google Agent Runtime"],
+    "mcpHosting": ["Cloud Run"],
+    "delivery": {
+      "method": "Hodos Workflow placement driver",
+      "immutableReferenceRequired": true
+    },
+    "identity": {
+      "ci": "GitHub OIDC to source registry only",
+      "deployment": "Hodos Workflow Workload Identity Federation",
+      "runtime": "Agent Identity or a dedicated service account fallback"
+    },
+    "events": {
+      "mode": "Audit Logs and Eventarc to authenticated Pub/Sub push plus periodic reconciliation",
+      "authoritativeRefresh": true
+    },
+    "documentation": {
+      "guide": null,
+      "verifiedAt": null,
+      "note": "Not published as supported until the live Google Cloud gate passes."
+    }
+  }
+}

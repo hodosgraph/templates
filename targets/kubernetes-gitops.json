@@ -1,0 +1,38 @@
+{
+  "$schema": "../schemas/target-profile-v1alpha1.schema.json",
+  "apiVersion": "templates.hodosgraph.com/v1alpha1",
+  "kind": "TargetProfile",
+  "metadata": {
+    "id": "kubernetes-gitops",
+    "name": "Kubernetes with GitOps"
+  },
+  "spec": {
+    "provider": "kubernetes",
+    "maturity": "scaffold",
+    "artifact": {
+      "format": "oci-image",
+      "architectures": ["linux/amd64", "linux/arm64"],
+      "registry": "customer-selected OCI registry"
+    },
+    "agentHosting": ["Deployment", "Agent Sandbox"],
+    "mcpHosting": ["Deployment", "OpenSandbox-backed workload"],
+    "delivery": {
+      "method": "GitOps pull request",
+      "immutableReferenceRequired": true
+    },
+    "identity": {
+      "ci": "GitHub OIDC to registry only",
+      "deployment": "Hodos Workflow ServiceAccount and ProviderAccessBinding",
+      "runtime": "Kubernetes ServiceAccount with workload identity when required"
+    },
+    "events": {
+      "mode": "Kubernetes watch plus periodic reconciliation",
+      "authoritativeRefresh": true
+    },
+    "documentation": {
+      "guide": null,
+      "verifiedAt": null,
+      "note": "Not published as supported until the Agent Sandbox and OpenSandbox live gates pass."
+    }
+  }
+}

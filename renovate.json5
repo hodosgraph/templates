@@ -1,0 +1,23 @@
+{
+  extends: ["config:recommended"],
+  dependencyDashboard: true,
+  enabledManagers: ["npm", "dockerfile", "github-actions"],
+  minimumReleaseAge: "7 days",
+  rangeStrategy: "pin",
+  packageRules: [
+    {
+      matchUpdateTypes: ["major"],
+      dependencyDashboardApproval: true
+    },
+    {
+      matchManagers: ["dockerfile"],
+      matchUpdateTypes: ["digest"],
+      groupName: "official template base image digests"
+    },
+    {
+      matchManagers: ["github-actions"],
+      separateMajorMinor: true,
+      separateMinorPatch: true
+    }
+  ]
+}

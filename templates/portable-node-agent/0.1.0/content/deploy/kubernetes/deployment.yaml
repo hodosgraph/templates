@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ hodos.name }}
+  labels:
+    app.kubernetes.io/name: {{ hodos.name }}
+    app.kubernetes.io/managed-by: hodosgraph
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ hodos.name }}
+  labels:
+    app.kubernetes.io/name: {{ hodos.name }}
+    app.kubernetes.io/component: agent
+    app.kubernetes.io/managed-by: hodosgraph
+  annotations: {{ hodos.annotationsJson }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ hodos.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ hodos.name }}
+        app.kubernetes.io/component: agent
+        app.kubernetes.io/managed-by: hodosgraph
+      annotations: {{ hodos.annotationsJson }}
+    spec:
+      serviceAccountName: {{ hodos.name }}
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: agent
+          image: {{ hodos.imageDigest }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: MODEL_MODE
+              value: disabled
+            - name: PORT
+              value: "8080"
+            {{ hodos.configEnvYaml }}
+            {{ hodos.secretRefsEnvYaml }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: {{ hodos.resources.cpuRequest }}
+              memory: {{ hodos.resources.memoryRequest }}
+            limits:
+              cpu: {{ hodos.resources.cpuLimit }}
+              memory: {{ hodos.resources.memoryLimit }}
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
