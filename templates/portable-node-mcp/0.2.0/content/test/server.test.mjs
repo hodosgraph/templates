@@ -145,15 +145,20 @@ test("exports privacy-safe traces, metrics and logs over OTLP HTTP", async () =>
     response.end("{}");
   });
   const collectorPort = await listen(collector);
-  const environment = {
-    ...process.env,
+  const environment = Object.fromEntries(
+    Object.entries(process.env).filter(([name]) => !name.startsWith("OTEL_EXPORTER_OTLP"))
+  );
+  Object.assign(environment, {
     OTEL_SDK_DISABLED: "false",
     OTEL_EXPORTER_OTLP_ENDPOINT: `http://127.0.0.1:${collectorPort}`,
+    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: `http://127.0.0.1:${collectorPort}/v1/traces`,
+    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: `http://127.0.0.1:${collectorPort}/v1/metrics`,
+    OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: `http://127.0.0.1:${collectorPort}/v1/logs`,
     OTEL_METRIC_EXPORT_INTERVAL: "100",
     OTEL_METRIC_EXPORT_TIMEOUT: "50",
     OTEL_SERVICE_NAME: "gold-mcp-test",
     DEPLOYMENT_ENVIRONMENT: "test"
-  };
+  });
   const privateValue = "PRIVATE-ORDER-9f36ac";
 
   try {
