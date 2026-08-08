@@ -18,13 +18,25 @@ npm ci --ignore-scripts
 npm run check
 ```
 
-Expected result: two templates and four target profiles validate; all six service tests pass.
+Expected result: two templates and four target profiles validate, generated documentation is
+current and the catalog tests pass.
+
+Run the Gold MCP protocol and telemetry suite separately:
+
+```bash
+cd templates/portable-node-mcp/0.2.0/content
+npm ci --ignore-scripts
+npm test
+cd ../../../..
+```
+
+Expected result: the official MCP client, request hardening and local OTLP privacy tests pass.
 
 ## 3. Build both final images
 
 ```bash
 docker build --pull -t hodos-agent:test templates/portable-node-agent/0.1.0/content
-docker build --pull -t hodos-mcp:test templates/portable-node-mcp/0.1.0/content
+docker build --pull -t hodos-mcp:test templates/portable-node-mcp/0.2.0/content
 ```
 
 The builder runs each service's tests. Inspect the runtime contract:

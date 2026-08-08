@@ -5,7 +5,9 @@ sends OTLP to a local, cluster or provider collector. HodosGraph collectors obse
 deployment evidence; application code does not write telemetry or topology directly to the graph
 database.
 
-The current `0.1.0` templates do not implement this contract and cannot receive the Gold badge.
+The `portable-node-mcp` `0.2.0` template implements the portable part of this contract and tests
+OTLP HTTP traces, metrics and logs against a local receiver. The `portable-node-agent` `0.1.0`
+template does not yet implement this contract and cannot receive the Gold badge.
 
 ## Configuration
 

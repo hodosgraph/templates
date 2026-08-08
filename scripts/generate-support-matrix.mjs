@@ -61,8 +61,8 @@ immutable digest, agent-to-MCP identity, graph convergence, suspension and teard
 | --- | --- | --- | --- | --- | --- |
 ${templateRows}
 
-The current templates are suitable for catalog, image and local runtime verification. They are not
-presented as production agent-framework or MCP reference implementations.
+Template conformance and provider maturity are independent. The portable MCP runtime can pass Gold
+locally while every deployment target remains Scaffold until its dated live gate passes.
 
 ## Promotion evidence
 

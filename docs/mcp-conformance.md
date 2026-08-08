@@ -3,8 +3,10 @@
 An MCP server marked Gold uses an official Tier 1 SDK. Handwritten JSON-RPC routing is allowed for
 a scaffold test, but it is not a production protocol implementation.
 
-The current `portable-node-mcp` `0.1.0` release implements only a deterministic subset for local
-catalog verification. It does not pass this conformance profile.
+The current `portable-node-mcp` `0.2.0` release passes the portable Gold runtime profile with the
+official SDK, official test client, bounded inputs and privacy-safe OTLP export. This badge does not
+promote any provider target. Target identity and authorization evidence remains part of each
+provider's live promotion gate.
 
 ## Transport
 
