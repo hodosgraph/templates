@@ -126,6 +126,16 @@ test("rejects an unsafe concurrency configuration before listening", () => {
 });
 
 test("exports privacy-safe traces, metrics and logs over OTLP HTTP", async () => {
+  const proxyVariables = [
+    "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
+    "http_proxy", "https_proxy", "all_proxy",
+    "NO_PROXY", "no_proxy"
+  ];
+  const originalProxyEnvironment = new Map(proxyVariables.map((name) => [name, process.env[name]]));
+  for (const name of proxyVariables) delete process.env[name];
+  process.env.NO_PROXY = "127.0.0.1,localhost";
+  process.env.no_proxy = "127.0.0.1,localhost";
+
   const received = new Map();
   const collector = createHttpServer(async (request, response) => {
     const chunks = [];
@@ -154,7 +164,14 @@ test("exports privacy-safe traces, metrics and logs over OTLP HTTP", async () =>
       await new Promise((resolve) => setTimeout(resolve, 150));
     }, { environment });
   } finally {
-    await new Promise((resolve, reject) => collector.close((error) => error ? reject(error) : resolve()));
+    try {
+      await new Promise((resolve, reject) => collector.close((error) => error ? reject(error) : resolve()));
+    } finally {
+      for (const [name, value] of originalProxyEnvironment) {
+        if (value === undefined) delete process.env[name];
+        else process.env[name] = value;
+      }
+    }
   }
 
   assert.ok(received.get("/v1/traces")?.length > 0, "trace export was not received");
