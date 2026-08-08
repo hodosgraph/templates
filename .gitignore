@@ -1,4 +1,5 @@
 node_modules/
 coverage/
+generated/
 .DS_Store
 *.log

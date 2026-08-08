@@ -11,12 +11,26 @@
       {
         "id": "portable-node-agent",
         "version": "0.1.0",
-        "manifest": "templates/portable-node-agent/0.1.0/template.json"
+        "manifest": "templates/portable-node-agent/0.1.0/template.json",
+        "conformance": {
+          "framework": "none",
+          "deterministicMode": true,
+          "mcp": "not-applicable",
+          "openTelemetry": "none",
+          "level": "scaffold"
+        }
       },
       {
         "id": "portable-node-mcp",
         "version": "0.1.0",
-        "manifest": "templates/portable-node-mcp/0.1.0/template.json"
+        "manifest": "templates/portable-node-mcp/0.1.0/template.json",
+        "conformance": {
+          "framework": "none",
+          "deterministicMode": true,
+          "mcp": "minimal-handwritten",
+          "openTelemetry": "none",
+          "level": "scaffold"
+        }
       }
     ],
     "targetProfiles": [

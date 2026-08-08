@@ -29,11 +29,23 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["id", "version", "manifest"],
+            "required": ["id", "version", "manifest", "conformance"],
             "properties": {
               "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$" },
               "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$" },
-              "manifest": { "type": "string", "minLength": 1 }
+              "manifest": { "type": "string", "minLength": 1 },
+              "conformance": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["framework", "deterministicMode", "mcp", "openTelemetry", "level"],
+                "properties": {
+                  "framework": { "type": "string", "minLength": 1 },
+                  "deterministicMode": { "type": "boolean" },
+                  "mcp": { "enum": ["not-applicable", "minimal-handwritten", "official-sdk"] },
+                  "openTelemetry": { "enum": ["none", "otlp"] },
+                  "level": { "enum": ["scaffold", "gold"] }
+                }
+              }
             }
           }
         },

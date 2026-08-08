@@ -28,9 +28,9 @@ docker build -t hodos-agent:test templates/portable-node-agent/0.1.0/content
 docker build -t hodos-mcp:test templates/portable-node-mcp/0.1.0/content
 ```
 
-See [architecture](docs/architecture.md), [security contract](docs/security-contract.md),
-[local verification](docs/local-verification.md) and the generated-from-manifests
-[support matrix](docs/support-matrix.md).
+Start with the [documentation index](docs/index.md). It separates commands that work today from
+provider promotion workbooks that require a retained live run. The index links to the architecture,
+security, authoring, conformance and support material.
 
 ## Versioning and compatibility
 
@@ -39,7 +39,8 @@ changes require a new major version. A patch may correct documentation, validati
 content without changing required inputs. HodosGraph stores the template id, version, catalog
 revision and rendered-content checksum with every instantiation.
 
-Copier is not part of the trusted path. HodosGraph will render only the files declared in
-`template.json`, validate user inputs against the referenced JSON Schema and serialize structured
-annotations/configuration itself. Repository-provided hooks are never executed by the HodosGraph
-API server.
+The HodosGraph manifest is the marketplace, trust and release contract. Copier is the preferred
+community authoring and update engine, but it runs only in an isolated renderer. Its tasks,
+migrations and custom extensions are disabled by default. Cookiecutter compatibility is an import
+path, not the official release model. Repository-provided hooks are never executed by the
+HodosGraph API server.

@@ -1,0 +1,5 @@
+# This file is managed by Copier. Do not edit it manually.
+_src_path: examples/community-copier-agent
+dependency_updater: renovate
+description: Classifies a synthetic incident without invoking a foundation model.
+unit_name: incident-triage-agent

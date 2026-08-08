@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://templates.hodosgraph.com/schemas/catalog-source-v1alpha1.schema.json",
+  "title": "HodosGraph template catalog source",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "apiVersion": { "const": "templates.hodosgraph.com/v1alpha1" },
+    "kind": { "const": "TemplateCatalogSource" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "displayName"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 100 }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "releasePolicy", "trust", "sync"],
+      "properties": {
+        "repository": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["url", "manifestPath"],
+          "properties": {
+            "url": { "type": "string", "pattern": "^https://" },
+            "manifestPath": { "type": "string", "minLength": 1 }
+          }
+        },
+        "releasePolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode"],
+          "properties": {
+            "mode": { "enum": ["locked-ref", "semver-tags", "signed-oci-index"] },
+            "ref": { "type": "string", "minLength": 1 }
+          }
+        },
+        "trust": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "allowedSigners", "allowUnsafeRenderer"],
+          "properties": {
+            "mode": { "enum": ["official", "verified", "community"] },
+            "allowedSigners": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            },
+            "allowUnsafeRenderer": { "const": false }
+          }
+        },
+        "sync": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["intervalHours"],
+          "properties": {
+            "intervalHours": { "type": "integer", "minimum": 1, "maximum": 168 }
+          }
+        }
+      }
+    }
+  }
+}

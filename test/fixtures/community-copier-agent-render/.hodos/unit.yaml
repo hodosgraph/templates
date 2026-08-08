@@ -1,0 +1,7 @@
+apiVersion: templates.hodosgraph.com/v1alpha1
+kind: GeneratedUnit
+metadata:
+  name: incident-triage-agent
+spec:
+  template: community-incident-agent
+  dependencyUpdater: renovate

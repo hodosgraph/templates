@@ -1,0 +1,52 @@
+{
+  "$schema": "../../schemas/template-v1alpha2.schema.json",
+  "apiVersion": "templates.hodosgraph.com/v1alpha2",
+  "kind": "Template",
+  "metadata": {
+    "id": "community-incident-agent",
+    "name": "Community incident agent",
+    "version": "0.1.0",
+    "description": "Example Copier-authored agent template with declared ownership and safe inputs.",
+    "owners": ["example-platform-team"],
+    "license": "Apache-2.0",
+    "tags": ["agent", "copier", "incident"]
+  },
+  "spec": {
+    "type": "agent",
+    "maturity": "scaffold",
+    "engine": {
+      "name": "copier",
+      "versionRange": ">=9.0.0 <10.0.0",
+      "configFile": "copier.yml",
+      "unsafeFeatures": false
+    },
+    "inputSchema": "schemas/inputs.schema.json",
+    "framework": {
+      "name": "minimal",
+      "language": "python",
+      "versionRange": ">=3.12 <3.14"
+    },
+    "capabilities": ["deterministic-mode"],
+    "outputs": [
+      { "pattern": ".hodos/**", "phase": "source", "ownership": "managed" },
+      { "pattern": ".copier-answers.yml", "phase": "source", "ownership": "managed" },
+      { "pattern": "README.md", "phase": "source", "ownership": "managed" },
+      { "pattern": "src/domain/**", "phase": "source", "ownership": "user-owned" }
+    ],
+    "targets": ["kubernetes-gitops"],
+    "compatibility": {
+      "hodos": ">=1.0.0 <2.0.0",
+      "architectures": ["linux/amd64", "linux/arm64"]
+    },
+    "security": {
+      "secretInputs": false,
+      "networkDuringRender": false,
+      "dependencyUpdaters": ["dependabot", "renovate"]
+    },
+    "conformance": {
+      "profile": "scaffold",
+      "sampleAnswers": ["samples/minimal.answers.json"],
+      "renderedFixture": "../../test/fixtures/community-copier-agent-render"
+    }
+  }
+}

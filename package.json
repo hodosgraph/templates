@@ -7,8 +7,10 @@
     "node": ">=22"
   },
   "scripts": {
-    "check": "npm run validate && npm test",
+    "check": "npm run validate && npm run docs:check && npm test",
+    "docs:check": "node scripts/generate-support-matrix.mjs --check && node scripts/check-docs.mjs",
+    "docs:matrix": "node scripts/generate-support-matrix.mjs",
     "test": "node --test",
-    "validate": "node scripts/validate-catalog.mjs"
+    "validate": "node scripts/validate-catalog.mjs && node scripts/validate-authoring-example.mjs"
   }
 }

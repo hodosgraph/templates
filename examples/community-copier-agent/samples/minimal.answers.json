@@ -1,0 +1,5 @@
+{
+  "unit_name": "incident-triage-agent",
+  "description": "Classifies a synthetic incident without invoking a foundation model.",
+  "dependency_updater": "renovate"
+}

@@ -89,9 +89,15 @@ async function validateTarget(relativePath) {
 }
 
 async function validateTemplate(entry, targetIds) {
-  exactKeys(entry, ["id", "version", "manifest"], `catalog template ${entry.id ?? "<unknown>"}`);
+  exactKeys(entry, ["id", "version", "manifest", "conformance"], `catalog template ${entry.id ?? "<unknown>"}`);
   invariant(identifier.test(entry.id), `template id ${entry.id} is invalid`);
   invariant(semver.test(entry.version), `template ${entry.id} version is not semver`);
+  exactKeys(entry.conformance, ["framework", "deterministicMode", "mcp", "openTelemetry", "level"], `catalog template ${entry.id} conformance`);
+  invariant(typeof entry.conformance.framework === "string" && entry.conformance.framework.length > 0, `template ${entry.id} framework is required`);
+  invariant(typeof entry.conformance.deterministicMode === "boolean", `template ${entry.id} deterministic mode must be declared`);
+  invariant(["not-applicable", "minimal-handwritten", "official-sdk"].includes(entry.conformance.mcp), `template ${entry.id} MCP conformance is invalid`);
+  invariant(["none", "otlp"].includes(entry.conformance.openTelemetry), `template ${entry.id} OpenTelemetry conformance is invalid`);
+  invariant(["scaffold", "gold"].includes(entry.conformance.level), `template ${entry.id} conformance level is invalid`);
   const manifest = await loadJson(entry.manifest);
   exactKeys(manifest, ["$schema", "apiVersion", "kind", "metadata", "spec"], entry.manifest);
   invariant(manifest.apiVersion === "templates.hodosgraph.com/v1alpha1", `${entry.manifest} apiVersion is invalid`);
@@ -101,6 +107,11 @@ async function validateTemplate(entry, targetIds) {
   invariant(manifest.metadata.version === entry.version, `${entry.manifest} version does not match catalog`);
   exactKeys(manifest.spec, ["type", "maturity", "inputSchema", "files", "targets", "security"], `${entry.manifest}.spec`);
   invariant(["agent", "mcp-server"].includes(manifest.spec.type), `${entry.manifest} type is invalid`);
+  invariant(manifest.spec.type === "mcp-server" || entry.conformance.mcp === "not-applicable", `${entry.manifest} agent must declare MCP as not applicable`);
+  invariant(manifest.spec.type !== "mcp-server" || entry.conformance.mcp !== "not-applicable", `${entry.manifest} MCP server must declare its protocol implementation`);
+  invariant(entry.conformance.level !== "gold" || entry.conformance.deterministicMode, `${entry.manifest} Gold requires deterministic mode`);
+  invariant(entry.conformance.level !== "gold" || entry.conformance.openTelemetry === "otlp", `${entry.manifest} Gold requires OTLP`);
+  invariant(entry.conformance.level !== "gold" || manifest.spec.type !== "mcp-server" || entry.conformance.mcp === "official-sdk", `${entry.manifest} Gold MCP requires the official SDK`);
   invariant(["scaffold", "preview", "stable"].includes(manifest.spec.maturity), `${entry.manifest} maturity is invalid`);
   invariant(Array.isArray(manifest.spec.files) && manifest.spec.files.length > 0, `${entry.manifest} needs files`);
   invariant(Array.isArray(manifest.spec.targets) && manifest.spec.targets.length > 0, `${entry.manifest} needs targets`);

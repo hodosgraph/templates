@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://templates.hodosgraph.com/schemas/template-v1alpha2.schema.json",
+  "title": "HodosGraph composable template manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "apiVersion": { "const": "templates.hodosgraph.com/v1alpha2" },
+    "kind": { "const": "Template" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "version", "description", "owners", "license"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "owners": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.@/-]{0,99}$" }
+        },
+        "license": { "type": "string", "pattern": "^[A-Za-z0-9-.+]+$" },
+        "tags": {
+          "type": "array",
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,31}$" }
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "maturity", "engine", "inputSchema", "framework", "capabilities", "outputs", "targets", "compatibility", "conformance"],
+      "properties": {
+        "type": { "enum": ["agent", "mcp-server", "blueprint", "capability-pack"] },
+        "maturity": { "enum": ["scaffold", "preview", "stable"] },
+        "engine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "versionRange", "configFile", "unsafeFeatures"],
+          "properties": {
+            "name": { "enum": ["hodos-files-v1", "copier", "cookiecutter"] },
+            "versionRange": { "type": "string", "minLength": 1 },
+            "configFile": { "type": "string", "minLength": 1 },
+            "unsafeFeatures": { "const": false }
+          }
+        },
+        "inputSchema": { "type": "string", "minLength": 1 },
+        "framework": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "language", "versionRange"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "language": { "enum": ["python", "typescript", "go", "csharp", "none"] },
+            "versionRange": { "type": "string", "minLength": 1 }
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$" }
+        },
+        "outputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["pattern", "phase", "ownership"],
+            "properties": {
+              "pattern": { "type": "string", "minLength": 1 },
+              "phase": { "enum": ["source", "deployment"] },
+              "ownership": { "enum": ["managed", "merge", "user-owned"] }
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$" }
+        },
+        "compatibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["hodos", "architectures"],
+          "properties": {
+            "hodos": { "type": "string", "minLength": 1 },
+            "architectures": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "enum": ["linux/amd64", "linux/arm64", "not-applicable"] }
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["secretInputs", "networkDuringRender", "dependencyUpdaters"],
+          "properties": {
+            "secretInputs": { "const": false },
+            "networkDuringRender": { "const": false },
+            "dependencyUpdaters": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "enum": ["dependabot", "renovate"] }
+            }
+          }
+        },
+        "conformance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["profile", "sampleAnswers", "renderedFixture"],
+          "properties": {
+            "profile": { "enum": ["scaffold", "gold"] },
+            "sampleAnswers": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            },
+            "renderedFixture": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "enum": ["agent", "mcp-server"] } },
+            "required": ["type"]
+          },
+          "then": { "required": ["security"] }
+        }
+      ]
+    }
+  }
+}

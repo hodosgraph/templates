@@ -1,0 +1,17 @@
+_min_copier_version: "9.0.0"
+_subdirectory: template
+
+unit_name:
+  type: str
+  help: Lowercase unit name used by source and deployment metadata.
+
+description:
+  type: str
+  help: One sentence that states the agent's responsibility.
+
+dependency_updater:
+  type: str
+  choices:
+    - dependabot
+    - renovate
+  default: renovate
